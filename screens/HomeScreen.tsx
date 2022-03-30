@@ -9,6 +9,9 @@ export default function HomeScreen() {
     );
 }
 
+//TODO: DEN SKAL IKKE FEJLE MED AT HENTE CHATROOMS HVIS MAN HAR VÆRET INDE PÅ CHAT SIDEN FØR LOGIN/SIGNUP
+//TODO: SKAL DEN VISE ANDRE BRUGERES CHATROOM?
+
 const styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -17,3 +20,4 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
 })
+

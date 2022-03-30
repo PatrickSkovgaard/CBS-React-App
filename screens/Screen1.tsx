@@ -1,10 +1,10 @@
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Button, FlatList, StyleSheet, Text, TextInput, View } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { Chatroom, Status } from '../entities/Chatroom';
-import { addChatroom, toggleHappy } from '../store/actions/chat.actions';
+import { addChatroom, fetchChatrooms, toggleHappy } from '../store/actions/chat.actions';
 import { StackParamList } from "../typings/navigations";
 
 type ScreenNavigationType = NativeStackNavigationProp<
@@ -21,6 +21,12 @@ export default function Screen1() {
 
     console.log("isHappy", isHappy);
     const dispatch = useDispatch()
+
+    useEffect(() => { //only runs dispatch the first time the component renders
+      dispatch(fetchChatrooms())  
+    }, [])
+    
+
 
     const handleAddChatroom = () => {
         const chatroom: Chatroom = new Chatroom(title, Status.UNREAD, '', new Date());
@@ -40,7 +46,7 @@ export default function Screen1() {
             <FlatList
                 data={chatrooms}
                 renderItem={renderChatroom}
-                keyExtractor={item => item.title} // chatroom titles must be unique when I do this.
+                //når man har et id (f.eks i Chatroom) så bliver det brugt automatisk
             />
 
             <TextInput
@@ -59,5 +65,6 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         alignItems: 'center',
         justifyContent: 'center',
-    },
+        border: 'solid black 1px'
+    }
 })
