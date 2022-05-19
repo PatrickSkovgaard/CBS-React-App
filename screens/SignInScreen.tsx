@@ -1,7 +1,6 @@
-import { useNavigation } from '@react-navigation/native';
-import React, { useState } from 'react';
+import React from 'react';
 import { Button, StyleSheet, Text, TextInput, View } from 'react-native';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { signin } from '../store/actions/user.actions';
 
 
@@ -9,8 +8,6 @@ export default function SignInScreen(){
 
         const [email, onChangeEmail] = React.useState('');
         const [password, onChangePassword] = React.useState('');
-        const loggedInUser = useSelector((state: any) => state.user.loggedInUser);
-        const token = useSelector((state: any) => state.user.idToken);
 
         const dispatch = useDispatch();
 
@@ -18,10 +15,9 @@ export default function SignInScreen(){
             dispatch(signin(email, password))
         }
 
-        
         return (
             <View style = {styles.container}>
-                <Text>Sign In Screen</Text>
+                <Text>Sign In</Text>
                     
                 <TextInput style = {styles.input}
                     onChangeText = {onChangeEmail}

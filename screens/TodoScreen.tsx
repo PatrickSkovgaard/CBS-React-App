@@ -12,7 +12,7 @@ export default function TodoScreen() {
         return (
             <TouchableOpacity style={styles.item} onPress={() => deleteTodo(new Todo(item.id, item.title))}>
                 <Text style={styles.title}>{item.title}</Text>
-                {/* <Button title="Delete me" onPress={() => deleteTodo(new Todo(id, title))} /> */}
+                 <Button title="Delete me" onPress={() => deleteTodo(new Todo(id, item.title))} /> 
             </TouchableOpacity>
         )
     }
@@ -53,6 +53,7 @@ export default function TodoScreen() {
         </View>
     );
 }
+
 
 const styles = StyleSheet.create({
     container: {

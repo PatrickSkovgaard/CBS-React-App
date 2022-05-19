@@ -1,32 +1,23 @@
-import { useNavigation } from '@react-navigation/native';
-import React, { useState } from 'react';
+import React from 'react';
 import { Button, StyleSheet, Text, TextInput, View } from 'react-native';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { signup } from '../store/actions/user.actions';
-
 
 
     export default function SignupScreen(){
 
         const [email, onChangeEmail] = React.useState('');
         const [password, onChangePassword] = React.useState('');
-        const loggedInUser = useSelector((state: any) => state.user.loggedInUser);
-        const token = useSelector((state: any) => state.user.idToken);
-
-        console.log("signup screen loggedinuser og token: loggedinuser: " + loggedInUser + " token " + token)
 
         const dispatch = useDispatch();
-        
 
         const handleSignup = ()=>{
             dispatch(signup(email, password))
         }
 
-        console.log(email + " " + password)
-
         return (
             <View style = {styles.container}>
-                <Text>Signup Screen</Text>
+                <Text>Sign up</Text>
                     
                 <TextInput style = {styles.input}
                     onChangeText = {onChangeEmail}

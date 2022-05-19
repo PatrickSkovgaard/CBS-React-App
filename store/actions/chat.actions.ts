@@ -1,12 +1,17 @@
 import { Chatroom } from "../../entities/Chatroom";
-
 export const TOGGLE_HAPPY = 'TOGGLE_HAPPY';
 export const ADD_CHATROOM = 'ADD_CHATROOM';
 export const FETCH_CHATROOMS = 'FETCH_CHATROOMS';
+export const REMOVE_CHATROOM = 'REMOVE_CHATROOM';
 
 export const toggleHappy = () => {
     return { type: TOGGLE_HAPPY };
 };
+
+/*
+export const removeChatroom = () => {
+    return { type: REMOVE_CHATROOM };
+}*/
 
 /*export const addChatroom = (chatroom: Chatroom) => {
     return { type: 'ADD_CHATROOM', payload: chatroom }
@@ -15,9 +20,10 @@ export const toggleHappy = () => {
 
 export const fetchChatrooms = () => {
     return async (dispatch: any, getState: any) => {
+
         const token = getState().user.idToken;
-console.log("GET STATE ER: " + getState().user.idToken)
-        const response = await fetch('https://cbs-server-6fe15-default-rtdb.europe-west1.firebasedatabase.app/chatrooms.json?auth=' + token, {
+        
+        const response = await fetch('https://react-cbs-default-rtdb.europe-west1.firebasedatabase.app/chatrooms.json?auth=' + token, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json'
@@ -31,17 +37,10 @@ console.log("GET STATE ER: " + getState().user.idToken)
         else{
             const data = await response.json();
             let chatrooms: Chatroom[] = []
+            
             for(const key in data){
-                console.log("KEYEN ER: " + key + " in " + data[key].title)
                 chatrooms.push(new Chatroom(data[key].title, data[key].status, data[key].message, new Date(data[key].timestamp), key ))
             }
-
-             chatrooms.forEach(elem => {
-                console.log("element i chatroom foreach: ")
-                console.log(elem)
-            })
-
-            console.log(data)
 
             dispatch({ type: 'FETCH_CHATROOMS', payload: chatrooms})
         }   
@@ -52,11 +51,10 @@ console.log("GET STATE ER: " + getState().user.idToken)
 export const addChatroom = (chatroom: Chatroom) => {
 
     return async (dispatch: any, getState: any) => {
+
         const token = getState().user.idToken;
 
-        console.log("ADD chatroom id token er: " + getState().user.idToken)
-
-        const response = await fetch('https://cbs-server-6fe15-default-rtdb.europe-west1.firebasedatabase.app/chatrooms.json?auth=' + token, {
+        const response = await fetch('https://react-cbs-default-rtdb.europe-west1.firebasedatabase.app/chatrooms.json?auth=' + token, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -86,3 +84,34 @@ export const addChatroom = (chatroom: Chatroom) => {
         }
     };
 };
+
+
+    export const removeChatroom = (chatroom: Chatroom) => {
+
+        return async (dispatch: any, getState: any) => {
+    
+            const token = getState().user.idToken;
+            console.log(chatroom + ' i chat actions')
+    
+            const response = await fetch(`https://react-cbs-default-rtdb.europe-west1.firebasedatabase.app/chatrooms/${chatroom.id}.json`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    token: token
+                })
+            });
+    
+            if (!response.ok) {
+                console.log(response)
+    
+                
+            } else {
+                const data = await response.json(); // json to javascript
+                console.log("vi er i remove chatroom")
+               
+                dispatch({ type: REMOVE_CHATROOM, payload: chatroom })
+            }
+        };
+    };
