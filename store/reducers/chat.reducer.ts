@@ -40,9 +40,10 @@ const chatReducer = (state: ReduxState = initialState, action: ReduxAction) => {
 
         case REMOVE_CHATROOM:
             
-        return {...state};
+        return {...state, chatroom: action}; 
 
         default:
+            console.log("default state i chat reducer")
             return state;
     }
 };

@@ -4,10 +4,10 @@ import React, { useEffect } from 'react';
 import { Button, FlatList, StyleSheet, Text, TextInput, View } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { Chatroom, Status } from '../entities/Chatroom';
-import { addChatroom, fetchChatrooms, toggleHappy, removeChatroom } from '../store/actions/chat.actions';
+import { addChatroom, fetchChatrooms, removeChatroom, toggleHappy, /* removeChatroom */ } from '../store/actions/chat.actions';
 import { StackParamList } from "../typings/navigations";
-import { Database, getDatabase } from 'firebase/database';
-import { db } from '../config/db';
+import StartFirebase from '../config/db';
+import { ref, set, get, update, remove, child, refFromURL } from 'firebase/database';
 
 type ScreenNavigationType = NativeStackNavigationProp<
     StackParamList,
@@ -16,10 +16,13 @@ type ScreenNavigationType = NativeStackNavigationProp<
 
 export default function Screen1() {
 
-    const myDB = getDatabase(db);
-    console.log("min database??? " + myDB)
-
+    // const myDB = getDatabase(db, db.options.databaseURL);
+    // console.log("min database??? " + JSON.stringify(myDB))
+    // console.log("db type??? " + myDB.type)
+        
+    const db = StartFirebase();
     
+
     const navigation = useNavigation<ScreenNavigationType>()
     const [title, onChangeTitle] = React.useState('');
 
@@ -38,12 +41,23 @@ export default function Screen1() {
 
     const shortDate = date[0];
 
+
+
     const handleAddChatroom = () => {
         const chatroom: Chatroom = new Chatroom(title, Status.UNREAD, '', shortDate);
         sessionStorage.setItem("dato", shortDate);
 
         dispatch(addChatroom(chatroom));
     }
+
+
+    const handleRemoveChatroom = (chatroom: any) => {
+        console.log("Screen 1, chatroom: " + chatroom.id)
+
+        dispatch(removeChatroom(chatroom))
+    }
+
+
     const renderChatroom = ({ item }: { item: any }) => {
     //    <>
     //     <View style={elements.styling}>
@@ -51,8 +65,7 @@ export default function Screen1() {
     //         <Text style={body_style.status}>{item.status}</Text>
     //         </View>
     //     </> 
-        console.log('SCreeen 1 ' + item)
-        sessionStorage.setItem("item", item)
+        
          return ( <>
                     <View style={body_area_style.buttons}>
                         <View style={body_area_style.btn_one}>
@@ -62,7 +75,7 @@ export default function Screen1() {
                                  } />
                         </View>
                         <View>
-                            <Button title="remove" onPress={() => dispatch(removeChatroom(item))} />
+                            <Button title="remove" onPress={() => handleRemoveChatroom(item)} /> 
                         </View>
                         <View style={body_area_style.btn_two}>     
                             <Button title={item.status} onPress={()=> dispatch(toggleHappy())}/>
@@ -71,7 +84,8 @@ export default function Screen1() {
                 </>)
     };
 
-
+    
+    
     return (
         <View style={styles.container}>
             {/*<Text>Screen 1</Text> */}
@@ -97,8 +111,11 @@ export default function Screen1() {
             />
             <Button title="Create chatroom" onPress={handleAddChatroom} />
         </View>
-    );
-}
+        );
+    }
+
+
+
 
 const styles = StyleSheet.create({
     container: {

@@ -1,4 +1,5 @@
 import { Chatroom } from "../../entities/Chatroom";
+
 export const TOGGLE_HAPPY = 'TOGGLE_HAPPY';
 export const ADD_CHATROOM = 'ADD_CHATROOM';
 export const FETCH_CHATROOMS = 'FETCH_CHATROOMS';
@@ -8,10 +9,37 @@ export const toggleHappy = () => {
     return { type: TOGGLE_HAPPY };
 };
 
-/*
-export const removeChatroom = () => {
-    return { type: REMOVE_CHATROOM };
-}*/
+
+export const removeChatroom = (chatroom: any) => {
+    return async (dispatch: any, getState: any) => {
+
+        console.log("remove chatroom, før fetch: " + chatroom.id)
+
+        const res = await fetch(`https://react-cbs-default-rtdb.europe-west1.firebasedatabase.app/chatrooms/${chatroom.id}.json`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                ...chatroom,
+                chatroom: null
+            })
+        })
+        if (!res.ok) {
+            console.log(res)
+
+            //There was a problem..
+            alert("FEJL!")
+            console.log("Der er en fejl i chat.actions.ts ved DELETE CHAT")
+        } else {
+            const data = await res.json(); // json to javascript
+
+            console.log("chatroom efter fetch: " + data)
+            //chatroom.id = data.name;
+            dispatch({ type: REMOVE_CHATROOM, payload: chatroom })
+        }
+    }
+}
 
 /*export const addChatroom = (chatroom: Chatroom) => {
     return { type: 'ADD_CHATROOM', payload: chatroom }
@@ -85,13 +113,14 @@ export const addChatroom = (chatroom: Chatroom) => {
     };
 };
 
-
+/*
     export const removeChatroom = (chatroom: Chatroom) => {
 
         return async (dispatch: any, getState: any) => {
     
+            getState().remove
             const token = getState().user.idToken;
-            console.log(chatroom + ' i chat actions')
+            console.log(JSON.stringify(chatroom) + ' i chat actions')
     
             const response = await fetch(`https://react-cbs-default-rtdb.europe-west1.firebasedatabase.app/chatrooms/${chatroom.id}.json`, {
                 method: 'DELETE',
@@ -99,7 +128,8 @@ export const addChatroom = (chatroom: Chatroom) => {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    token: token
+                    token: token,
+                    name: getState().chatroom
                 })
             });
     
@@ -115,3 +145,4 @@ export const addChatroom = (chatroom: Chatroom) => {
             }
         };
     };
+*/
