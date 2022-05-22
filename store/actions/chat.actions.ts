@@ -12,7 +12,6 @@ export const toggleHappy = () => {
 
 export const removeChatroom = (chatroom: any) => {
     return async (dispatch: any, getState: any) => {
-
         console.log("remove chatroom, før fetch: " + chatroom.id)
 
         const res = await fetch(`https://react-cbs-default-rtdb.europe-west1.firebasedatabase.app/chatrooms/${chatroom.id}.json`, {
@@ -26,24 +25,18 @@ export const removeChatroom = (chatroom: any) => {
             })
         })
         if (!res.ok) {
-            console.log(res)
-
-            //There was a problem..
-            alert("FEJL!")
             console.log("Der er en fejl i chat.actions.ts ved DELETE CHAT")
-        } else {
-            const data = await res.json(); // json to javascript
 
+        } else {
+            const data = await res.json();
+            
             console.log("chatroom efter fetch: " + data)
-            //chatroom.id = data.name;
+        
             dispatch({ type: REMOVE_CHATROOM, payload: chatroom })
+            
         }
     }
 }
-
-/*export const addChatroom = (chatroom: Chatroom) => {
-    return { type: 'ADD_CHATROOM', payload: chatroom }
-}*/
 
 
 export const fetchChatrooms = () => {
@@ -51,6 +44,7 @@ export const fetchChatrooms = () => {
 
         const token = getState().user.idToken;
         
+
         const response = await fetch('https://react-cbs-default-rtdb.europe-west1.firebasedatabase.app/chatrooms.json?auth=' + token, {
             method: 'GET',
             headers: {
@@ -61,14 +55,17 @@ export const fetchChatrooms = () => {
 
         if(!response.ok){
             console.log('fetch chatroom problem..')
+
         }
         else{
             const data = await response.json();
             let chatrooms: Chatroom[] = []
             
             for(const key in data){
-                chatrooms.push(new Chatroom(data[key].title, data[key].status, data[key].message, new Date(data[key].timestamp), key ))
+                chatrooms.push(new Chatroom(data[key].title, data[key].status, data[key].message,
+                               new Date(data[key].timestamp), key ))
             }
+
 
             dispatch({ type: 'FETCH_CHATROOMS', payload: chatrooms})
         }   
@@ -77,21 +74,18 @@ export const fetchChatrooms = () => {
 
 
 export const addChatroom = (chatroom: Chatroom) => {
-
     return async (dispatch: any, getState: any) => {
 
         const token = getState().user.idToken;
+
 
         const response = await fetch('https://react-cbs-default-rtdb.europe-west1.firebasedatabase.app/chatrooms.json?auth=' + token, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ //javascript to json
-                //key value pairs of data you want to send to server
-                // ...
-                
-                ...chatroom, //spread operator, tager alt fra chatroom
+            body: JSON.stringify({ 
+                ...chatroom, 
                  chatroom: Chatroom,
                 returnSecureToken: true
             })
@@ -104,7 +98,7 @@ export const addChatroom = (chatroom: Chatroom) => {
             alert("FEJL!")
             console.log("Der er en fejl i chat.actions.ts")
         } else {
-            const data = await response.json(); // json to javascript
+            const data = await response.json();
 
             chatroom.id = data.name;
            
@@ -112,37 +106,3 @@ export const addChatroom = (chatroom: Chatroom) => {
         }
     };
 };
-
-/*
-    export const removeChatroom = (chatroom: Chatroom) => {
-
-        return async (dispatch: any, getState: any) => {
-    
-            getState().remove
-            const token = getState().user.idToken;
-            console.log(JSON.stringify(chatroom) + ' i chat actions')
-    
-            const response = await fetch(`https://react-cbs-default-rtdb.europe-west1.firebasedatabase.app/chatrooms/${chatroom.id}.json`, {
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    token: token,
-                    name: getState().chatroom
-                })
-            });
-    
-            if (!response.ok) {
-                console.log(response)
-    
-                
-            } else {
-                const data = await response.json(); // json to javascript
-                console.log("vi er i remove chatroom")
-               
-                dispatch({ type: REMOVE_CHATROOM, payload: chatroom })
-            }
-        };
-    };
-*/

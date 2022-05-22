@@ -20,27 +20,25 @@ interface ReduxAction {
     payload?: boolean | number | string | Chatroom
 }
 
+
+
 const chatReducer = (state: ReduxState = initialState, action: ReduxAction) => {
     switch (action.type) {
-        case TOGGLE_HAPPY:
 
+        case TOGGLE_HAPPY:
             return { ...state, isHappy: !state.isHappy }
 
 
         case ADD_CHATROOM:
-
-        const chatroom = action.payload as Chatroom
-            //state.chatrooms.push(chatroom) // mutating state. Not allowed
+            const chatroom = action.payload as Chatroom
             return { ...state, chatrooms: [...state.chatrooms, chatroom] }
 
 
         case FETCH_CHATROOMS:
-
             return {...state, chatrooms: action.payload};
 
         case REMOVE_CHATROOM:
-            
-        return {...state, chatroom: action}; 
+            return {...state}; 
 
         default:
             console.log("default state i chat reducer")

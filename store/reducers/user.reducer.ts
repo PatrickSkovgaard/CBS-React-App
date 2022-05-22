@@ -14,6 +14,7 @@ const initialState: ReduxState = {
 
 const userReducer = (state: ReduxState = initialState, action: any) => {
     switch (action.type) {
+
         case LOGOUT:    
             console.log("Logging out!")
             return { ...state, loggedInUser: null, idToken: undefined }
@@ -24,7 +25,10 @@ const userReducer = (state: ReduxState = initialState, action: any) => {
 
         case SIGNIN:
             console.log("SIGNIN i reducer");
-            return {...state, loggedInUser: action.payload.user, email: action.payload.email, localId: action.payload.localId, idToken: action.payload.idToken};
+            
+            return {...state, 
+                loggedInUser: action.payload.user, email: action.payload.email, 
+                localId: action.payload.localId, idToken: action.payload.idToken};
 
         default:
                 console.log("Returner default state...........")

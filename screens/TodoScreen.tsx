@@ -3,10 +3,13 @@ import React, { useState } from 'react';
 import { Button, FlatList, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { Todo } from '../entities/Todo';
 
+
+
 export default function TodoScreen() {
     const [id, setId] = useState(Number)
     const [text, setText] = useState('')
     const [todos, setTodos] = useState([] as Todo[])
+
 
     const Item = ({ item }: { item: Todo }) => {
         return (
@@ -17,10 +20,12 @@ export default function TodoScreen() {
         )
     }
 
+
     const renderItem = ({ item }: { item: Todo }) => (
         <Item item={item} />
     );
 
+    
     const deleteTodo = (item: Todo) => {
         console.log(item);
         setTodos((todos: Todo[]) => {

@@ -2,26 +2,24 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React, { useEffect } from 'react';
 import { Button, FlatList, StyleSheet, Text, TextInput, View } from 'react-native';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector, useStore } from 'react-redux';
 import { Chatroom, Status } from '../entities/Chatroom';
-import { addChatroom, fetchChatrooms, removeChatroom, toggleHappy, /* removeChatroom */ } from '../store/actions/chat.actions';
+import { addChatroom, fetchChatrooms, removeChatroom, toggleHappy } from '../store/actions/chat.actions';
 import { StackParamList } from "../typings/navigations";
-import StartFirebase from '../config/db';
-import { ref, set, get, update, remove, child, refFromURL } from 'firebase/database';
 
 type ScreenNavigationType = NativeStackNavigationProp<
     StackParamList,
     "Screen1"
 >
 
-export default function Screen1() {
+export default function ChatScreen() {
 
     // const myDB = getDatabase(db, db.options.databaseURL);
     // console.log("min database??? " + JSON.stringify(myDB))
     // console.log("db type??? " + myDB.type)
-        
-    const db = StartFirebase();
     
+    const store = useStore()
+    store.dispatch
 
     const navigation = useNavigation<ScreenNavigationType>()
     const [title, onChangeTitle] = React.useState('');
@@ -51,7 +49,7 @@ export default function Screen1() {
     }
 
 
-    const handleRemoveChatroom = (chatroom: any) => {
+    const handleRemoveChatroom = (chatroom: Chatroom) => {
         console.log("Screen 1, chatroom: " + chatroom.id)
 
         dispatch(removeChatroom(chatroom))
@@ -59,12 +57,6 @@ export default function Screen1() {
 
 
     const renderChatroom = ({ item }: { item: any }) => {
-    //    <>
-    //     <View style={elements.styling}>
-    //         <Text style={body_style.rooms}>{item.title}</Text>
-    //         <Text style={body_style.status}>{item.status}</Text>
-    //         </View>
-    //     </> 
         
          return ( <>
                     <View style={body_area_style.buttons}>
@@ -75,7 +67,7 @@ export default function Screen1() {
                                  } />
                         </View>
                         <View>
-                            <Button title="remove" onPress={() => handleRemoveChatroom(item)} /> 
+                            <Button title="remove" onPress={() => handleRemoveChatroom(item)} color="#d33" /> 
                         </View>
                         <View style={body_area_style.btn_two}>     
                             <Button title={item.status} onPress={()=> dispatch(toggleHappy())}/>
@@ -85,23 +77,17 @@ export default function Screen1() {
     };
 
     
-    
     return (
         <View style={styles.container}>
-            {/*<Text>Screen 1</Text> */}
             <View style={top_page.style}>
                 <Button title="Go to screen 2" onPress={() => navigation.navigate("Screen2")} />
                 <Text>{isHappy.toString()}</Text>
-               { /* <Button title="Toggle happy" onPress={() => dispatch(toggleHappy())} /> */}
                 <Text>Chatrooms</Text>
             </View>
-
+            <div id="text_from_delete"></div>
             <FlatList
                 data={chatrooms} style={body_area_style.flatlist}
-                //renderItem={renderChatroom} style={body_area_style.flatlist}
                 renderItem={renderChatroom}
-                //handleRemoveChatroom skal slette, ikke tilføje!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                //når man har et id (f.eks i Chatroom) så bliver det brugt automatisk
             />
                 
             <TextInput style={text_area_style.textinput}
@@ -187,3 +173,16 @@ const text_area_style = StyleSheet.create({
         textAlign: 'center',
     }
 })
+
+
+
+
+
+
+
+ //    <>
+    //     <View style={elements.styling}>
+    //         <Text style={body_style.rooms}>{item.title}</Text>
+    //         <Text style={body_style.status}>{item.status}</Text>
+    //         </View>
+    //     </> 

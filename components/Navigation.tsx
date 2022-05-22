@@ -6,7 +6,7 @@ import { Button, Text } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../App";
 import HomeScreen from "../screens/HomeScreen";
-import Screen1 from "../screens/Screen1";
+import ChatScreen from "../screens/ChatScreen";
 import Screen2 from "../screens/Screen2";
 import Screen3 from "../screens/Screen3";
 import SignInScreen from "../screens/SignInScreen";
@@ -20,13 +20,14 @@ import { StackParamList } from "../typings/navigations";
 const Stack = createNativeStackNavigator<StackParamList>();
 const Tab = createBottomTabNavigator();
 
+
 function ChatStackNavigator() {
 
   const dispatch = useDispatch();
 
   return (
     <Stack.Navigator>
-      <Stack.Screen name="Screen1" component={Screen1} 
+      <Stack.Screen name="Screen1" component={ChatScreen} 
       options={{
         headerTitle: () => (<Text>Logout button</Text>),
         headerRight: () => (
