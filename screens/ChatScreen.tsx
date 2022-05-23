@@ -59,18 +59,15 @@ export default function ChatScreen() {
     const renderChatroom = ({ item }: { item: any }) => {
         
          return ( <>
-                    <View style={body_area_style.buttons}>
-                        <View style={body_area_style.btn_one}>
-                            <Button color={'#555'} title={item.title} onPress={
-                                function chatNavigation() {
-                                    navigation.navigate("Screen3")}
-                                 } />
-                        </View>
-                        <View>
-                            <Button title="remove" onPress={() => handleRemoveChatroom(item)} color="#d33" /> 
-                        </View>
-                        <View style={body_area_style.btn_two}>     
-                            <Button title={item.status} onPress={()=> dispatch(toggleHappy())}/>
+                    <View style={body_area_style.chatroom}>
+                            <Text style={body_area_style.text}>{item.title}</Text>
+                        <View style={body_area_style.buttons}>
+                                <Button color={"#00a"} title="Enter" onPress={
+                                    function chatNavigation() {
+                                        navigation.navigate("Screen3")}
+                                    } />
+                                <Button color={"#990"} title={item.status} onPress={()=> dispatch(toggleHappy())}/>    
+                                <Button title="remove" onPress={() => handleRemoveChatroom(item)} color="#d33" />
                         </View>
                     </View>
                 </>)
@@ -84,12 +81,12 @@ export default function ChatScreen() {
                 <Text>{isHappy.toString()}</Text>
                 <Text>Chatrooms</Text>
             </View>
-            <div id="text_from_delete"></div>
             <FlatList
                 data={chatrooms} style={body_area_style.flatlist}
                 renderItem={renderChatroom}
-            />
-                
+            />            
+             <Text style={body_area_style.arrow}>Drag down for more chatrooms ⬇</Text>
+
             <TextInput style={text_area_style.textinput}
                 onChangeText={onChangeTitle}
                 value={title}
@@ -106,11 +103,10 @@ export default function ChatScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#555',
+        backgroundColor: '#444',
         alignItems: 'center',
         justifyContent: 'center',
-        border: 'solid darkgrey 1px',
-        
+        border: 'solid darkgrey 1px'
     }
 })
 
@@ -124,25 +120,46 @@ const top_page = StyleSheet.create({
 const body_area_style = StyleSheet.create({
     flatlist: {
         flex: 1,
-        border: 'solid green 1.5px',
+       // border: 'solid green 1.5px',
         textAlign: 'center',
-        height: '50%',
-        width: '20%',
+       // height: 'fit',
+        maxHeight: "50%",
+        width:"fit-content",
+       // minWidth: "fit",
         position: 'absolute',
-        marginTop: '5px',
-        marginBottom: '5px'
+       // marginTop: '5px',
+       // marginBottom: '5px',
+    },
+    chatroom: {
+        marginBottom: "1vh",
+        border: "double #fff 3px"
     },
     buttons: {
         flex: 1,
         flexDirection: 'row',
         justifyContent: 'space-between',
+        backgroundColor: "#222"
     },
     btn_one: {
-        width: '50%',
-        
+        //width: '40%',
+        flex: 1,
+        flexDirection: "row"
     },
     btn_two: {
         
+    },
+    text: {
+        backgroundColor: "#222",
+        color: "magenta",
+        fontFamily: "Times New Roman",
+        fontWeight: "bold"
+    },
+    arrow: {
+        color: "lime",
+        marginVertical: "11vh",
+        fontStyle: "italic",
+        font: "25px"
+
     }
 })
 
@@ -169,7 +186,7 @@ const elements = StyleSheet.create({
 const text_area_style = StyleSheet.create({
     textinput: {
         border: 'solid black 2px',
-        marginBottom: '5px',
+        //marginBottom: '5px',
         textAlign: 'center',
     }
 })

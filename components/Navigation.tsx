@@ -2,7 +2,7 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import React from "react";
-import { Button, Text } from "react-native";
+import { Button, ImageBackground, Text } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../App";
 import HomeScreen from "../screens/HomeScreen";
@@ -55,9 +55,11 @@ const token = useSelector((state: any) => state.user.idToken)
 sessionStorage.setItem("token", token)
 sessionStorage.setItem("isSignedIn", isSignedIn)
 
+
   return (
     
     <NavigationContainer>
+      <ImageBackground source={require("../dark_background.jpg")} resizeMode="cover"></ImageBackground>
     {isSignedIn !== null ? (
         <Tab.Navigator screenOptions={{ headerShown: false }}>
           <Tab.Screen name="Home" component={HomeScreen} />
