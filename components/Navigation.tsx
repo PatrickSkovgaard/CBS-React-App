@@ -59,7 +59,6 @@ sessionStorage.setItem("isSignedIn", isSignedIn)
   return (
     
     <NavigationContainer>
-      <ImageBackground source={require("../dark_background.jpg")} resizeMode="cover"></ImageBackground>
     {isSignedIn !== null ? (
         <Tab.Navigator screenOptions={{ headerShown: false }}>
           <Tab.Screen name="Home" component={HomeScreen} />

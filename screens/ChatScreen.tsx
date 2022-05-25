@@ -1,7 +1,7 @@
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React, { useEffect } from 'react';
-import { Button, FlatList, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Alert, Button, FlatList, ImageBackground, StyleSheet, Text, TextInput, View } from 'react-native';
 import { useDispatch, useSelector, useStore } from 'react-redux';
 import { Chatroom, Status } from '../entities/Chatroom';
 import { addChatroom, fetchChatrooms, removeChatroom, toggleHappy } from '../store/actions/chat.actions';
@@ -14,9 +14,6 @@ type ScreenNavigationType = NativeStackNavigationProp<
 
 export default function ChatScreen() {
 
-    // const myDB = getDatabase(db, db.options.databaseURL);
-    // console.log("min database??? " + JSON.stringify(myDB))
-    // console.log("db type??? " + myDB.type)
     
     const store = useStore()
     store.dispatch
@@ -44,6 +41,12 @@ export default function ChatScreen() {
     const handleAddChatroom = () => {
         const chatroom: Chatroom = new Chatroom(title, Status.UNREAD, '', shortDate);
         sessionStorage.setItem("dato", shortDate);
+        if(chatroom.title.length === 0){
+            alert("Error! Chatroom name cannot be empty.")
+            console.log("tomt chatroom navn")
+           
+            return 0
+        }
 
         dispatch(addChatroom(chatroom));
     }
@@ -60,50 +63,58 @@ export default function ChatScreen() {
         
          return ( <>
                     <View style={body_area_style.chatroom}>
-                            <Text style={body_area_style.text}>{item.title}</Text>
+
+                        <Text style={body_area_style.text}>{item.title}</Text>
                         <View style={body_area_style.buttons}>
-                                <Button color={"#00a"} title="Enter" onPress={
-                                    function chatNavigation() {
-                                        navigation.navigate("Screen3")}
-                                    } />
-                                <Button color={"#990"} title={item.status} onPress={()=> dispatch(toggleHappy())}/>    
-                                <Button title="remove" onPress={() => handleRemoveChatroom(item)} color="#d33" />
+                            <Button color={"#00a"} title="Enter" onPress={
+                                function chatNavigation() {
+                                    navigation.navigate("Screen3")}
+                                } />
+                            <Button color={"#990"} title={item.status} onPress={()=> dispatch(toggleHappy())}/>    
+                            <Button title="remove" onPress={() => handleRemoveChatroom(item)} color="#d33" />
+                        
                         </View>
+                        
                     </View>
                 </>)
-    };
-
+            };
     
     return (
+        
         <View style={styles.container}>
+
             <View style={top_page.style}>
                 <Button title="Go to screen 2" onPress={() => navigation.navigate("Screen2")} />
                 <Text>{isHappy.toString()}</Text>
                 <Text>Chatrooms</Text>
+                <Text style={body_area_style.arrow}>Drag down for more chatrooms ⬇</Text>
             </View>
+
             <FlatList
+                numColumns={3}
                 data={chatrooms} style={body_area_style.flatlist}
                 renderItem={renderChatroom}
-            />            
-             <Text style={body_area_style.arrow}>Drag down for more chatrooms ⬇</Text>
+            />
 
             <TextInput style={text_area_style.textinput}
                 onChangeText={onChangeTitle}
                 value={title}
                 placeholder="Chatroom name"
+                maxLength={15}
+                textContentType={"name"}
             />
-            <Button title="Create chatroom" onPress={handleAddChatroom} />
+            <View style={text_area_style.btn}>
+            <Button color={"#90a"} title="Create chatroom" onPress={handleAddChatroom} />
+            </View>
         </View>
-        );
+        )
     }
-
-
 
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#444',
+        backgroundColor: '#353535',
         alignItems: 'center',
         justifyContent: 'center',
         border: 'solid darkgrey 1px'
@@ -123,11 +134,11 @@ const body_area_style = StyleSheet.create({
        // border: 'solid green 1.5px',
         textAlign: 'center',
        // height: 'fit',
-        maxHeight: "50%",
+        height: "50%",
         width:"fit-content",
        // minWidth: "fit",
         position: 'absolute',
-       // marginTop: '5px',
+        marginTop: '2%'
        // marginBottom: '5px',
     },
     chatroom: {
@@ -158,8 +169,8 @@ const body_area_style = StyleSheet.create({
         color: "lime",
         marginVertical: "11vh",
         fontStyle: "italic",
-        font: "25px"
-
+        fontSize: 15,
+        marginTop: "4%"
     }
 })
 
@@ -186,8 +197,12 @@ const elements = StyleSheet.create({
 const text_area_style = StyleSheet.create({
     textinput: {
         border: 'solid black 2px',
-        //marginBottom: '5px',
+        backgroundColor: "#ddd",
+        marginBottom: '0.5%',
         textAlign: 'center',
+    },
+    btn: {
+        marginBottom: "2%"
     }
 })
 

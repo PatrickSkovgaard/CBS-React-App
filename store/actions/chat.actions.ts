@@ -9,34 +9,7 @@ export const toggleHappy = () => {
     return { type: TOGGLE_HAPPY };
 };
 
-
-export const removeChatroom = (chatroom: any) => {
-    return async (dispatch: any, getState: any) => {
-        console.log("remove chatroom, før fetch: " + chatroom.id)
-
-        const res = await fetch(`https://react-cbs-default-rtdb.europe-west1.firebasedatabase.app/chatrooms/${chatroom.id}.json`, {
-            method: 'DELETE',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                ...chatroom,
-                chatroom: null
-            })
-        })
-        if (!res.ok) {
-            console.log("Der er en fejl i chat.actions.ts ved DELETE CHAT")
-
-        } else {
-            const data = await res.json();
-            
-            console.log("chatroom efter fetch: " + data)
-        
-            dispatch({ type: REMOVE_CHATROOM, payload: chatroom })
-            
-        }
-    }
-}
+const urlWithAuth = 'https://react-cbs-default-rtdb.europe-west1.firebasedatabase.app/chatrooms.json?auth='
 
 
 export const fetchChatrooms = () => {
@@ -45,7 +18,7 @@ export const fetchChatrooms = () => {
         const token = getState().user.idToken;
         
 
-        const response = await fetch('https://react-cbs-default-rtdb.europe-west1.firebasedatabase.app/chatrooms.json?auth=' + token, {
+        const response = await fetch(urlWithAuth + token, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json'
@@ -106,3 +79,56 @@ export const addChatroom = (chatroom: Chatroom) => {
         }
     };
 };
+
+
+
+export const removeChatroom = (chatroom: any) => {
+    return async (dispatch: any, getState: any) => {
+
+                                                // DEL 1/2 -> fetch DELETE \\
+        const res = await fetch(
+            `https://react-cbs-default-rtdb.europe-west1.firebasedatabase.app/chatrooms/${chatroom.id}.json`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                chatroom: null
+            })
+        })
+        if (!res.ok) {
+            console.log("Der er en fejl i chat.actions.ts ved DELETE CHAT")
+
+        } else {
+        
+//---------------------------------------------------------------------------------------------------------------------------
+                                //Dårlig måde at gøre det på, men det virker upåklageligt....
+                                                // DEL 2/2 fetch GET \\
+                                                
+        const token = getState().user.idToken
+
+        const response = await fetch(urlWithAuth + token, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+                },
+            }
+        )
+        if(!response.ok){
+            console.log('fetch chatroom problem.. in remove')
+        }
+        else{
+            const data = await response.json();
+            let chatrooms: Chatroom[] = []
+            
+            for(const key in data){
+                chatrooms.push(new Chatroom(data[key].title, data[key].status, data[key].message,
+                            new Date(data[key].timestamp), key ))
+            }
+    //---------------------------------------------------------------------------------------------------------------------------
+
+            dispatch({ type: REMOVE_CHATROOM, payload: chatrooms })
+            }
+        }
+    }
+}

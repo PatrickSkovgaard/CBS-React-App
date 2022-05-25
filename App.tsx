@@ -1,4 +1,5 @@
 import React from 'react';
+import { ImageBackground } from 'react-native';
 import { Provider } from 'react-redux';
 import { applyMiddleware, combineReducers, createStore } from 'redux';
 import ReduxThunk from 'redux-thunk';
