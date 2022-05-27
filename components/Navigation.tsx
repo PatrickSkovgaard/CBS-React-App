@@ -2,16 +2,14 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import React from "react";
-import { Button, ImageBackground, Text } from "react-native";
+import { Button, ImageBackground, StyleSheet, Text } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../App";
 import HomeScreen from "../screens/HomeScreen";
 import ChatScreen from "../screens/ChatScreen";
-import Screen2 from "../screens/Screen2";
-import Screen3 from "../screens/Screen3";
+import Screen2 from "../screens/ChatroomMessageScreen";
 import SignInScreen from "../screens/SignInScreen";
 import SignupScreen from "../screens/SignupScreen";
-import TodoScreen from "../screens/TodoScreen";
 import { logout } from "../store/actions/user.actions";
 import { StackParamList } from "../typings/navigations";
 
@@ -24,26 +22,54 @@ const Tab = createBottomTabNavigator();
 function ChatStackNavigator() {
 
   const dispatch = useDispatch();
+  
 
   return (
     <Stack.Navigator>
-      <Stack.Screen name="Screen1" component={ChatScreen} 
+      <Stack.Screen name="Chatrooms" component={ChatScreen}
       options={{
-        headerTitle: () => (<Text>Logout button</Text>),
+        animation: "default",
+        headerStyle: {
+          backgroundColor: "#358"
+        },
+        contentStyle: {
+          opacity: 50,
+          height: 10
+        },
+        headerBackTitleStyle: {
+          fontFamily: "Times New Roman"
+        },
+     /*   headerSearchBarOptions:{                   //Måske lav en funktion i ChatScreen, til at hente søgte chatrooms
+          onSearchButtonPress: 
+        },*/
+        headerTitleStyle: {
+          fontFamily: "Times New Roman",
+          fontSize: 25
+        },
+        headerTitleAlign: "center",
         headerRight: () => (
           <Button
             onPress={() => dispatch(logout())}
             title="logout!"
-            color="#0a0"
+            color="#3c3"
           />
         )
       }}
       />
-      <Stack.Screen name="Screen2" component={Screen2} />
-      <Stack.Screen name="Screen3" component={Screen3} />
-    </Stack.Navigator>
-  );
-}
+      <Stack.Screen name="ChatroomMessageScreen" component={Screen2}
+      options={{
+        headerRight: () => (
+          <Button
+            onPress={() => dispatch(logout())}
+            title="logout!"
+            color="#3c3"
+          />
+        )
+      }}
+      />
+ 
+</Stack.Navigator>
+ );}
 
 
 
@@ -63,9 +89,6 @@ sessionStorage.setItem("isSignedIn", isSignedIn)
         <Tab.Navigator screenOptions={{ headerShown: false }}>
           <Tab.Screen name="Home" component={HomeScreen} />
           <Tab.Screen name="Chat" component={ChatStackNavigator} />
-          <Tab.Screen name="todo" component={TodoScreen} />
-          {/* <Tab.Screen name="Discover" component={DiscoverScreen} /> */}
-          {/* <Tab.Screen name="Menu" component={MenuScreen} /> */}
        </Tab.Navigator>
       ) : (
         <Tab.Navigator screenOptions={{ headerShown: false }}>

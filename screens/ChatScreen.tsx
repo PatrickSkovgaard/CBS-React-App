@@ -1,15 +1,16 @@
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React, { useEffect } from 'react';
-import { Alert, Button, FlatList, ImageBackground, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Button, FlatList, ImageBackground, StyleSheet, Text, TextInput, View } from 'react-native';
 import { useDispatch, useSelector, useStore } from 'react-redux';
 import { Chatroom, Status } from '../entities/Chatroom';
-import { addChatroom, fetchChatrooms, removeChatroom, toggleHappy } from '../store/actions/chat.actions';
+import { addChatroom, editChatroom, fetchChatrooms, fetchOneChatroom, removeChatroom } from '../store/actions/chat.actions';
 import { StackParamList } from "../typings/navigations";
+
 
 type ScreenNavigationType = NativeStackNavigationProp<
     StackParamList,
-    "Screen1"
+    "Chatrooms"
 >
 
 export default function ChatScreen() {
@@ -19,11 +20,15 @@ export default function ChatScreen() {
     store.dispatch
 
     const navigation = useNavigation<ScreenNavigationType>()
-    const [title, onChangeTitle] = React.useState('');
+    const [title, onCreateTitle] = React.useState('');
+    const [editTitle, onChangeTitle] = React.useState('')
 
-    const isHappy = useSelector((state: any) => state.chat.isHappy) // subscribe to redux store and select attribute (isHappy)
+     // subscribe to redux store 
     const chatrooms: Chatroom[] = useSelector((state: any) => state.chat.chatrooms)
+    const [showEdit, setShowEdit]: any = React.useState(false) 
+    const [editChat, setEditChat]: any = React.useState()
     
+
     const dispatch = useDispatch()
 
     useEffect(() => { //only runs dispatch the first time the component renders
@@ -39,13 +44,13 @@ export default function ChatScreen() {
 
 
     const handleAddChatroom = () => {
-        const chatroom: Chatroom = new Chatroom(title, Status.UNREAD, '', shortDate);
-        sessionStorage.setItem("dato", shortDate);
+        const chatroom: Chatroom = new Chatroom(title, Status.UNREAD, [], shortDate, "");
+
         if(chatroom.title.length === 0){
             alert("Error! Chatroom name cannot be empty.")
             console.log("tomt chatroom navn")
            
-            return 0
+            return; 
         }
 
         dispatch(addChatroom(chatroom));
@@ -59,53 +64,97 @@ export default function ChatScreen() {
     }
 
 
+
+    const openEdit = (item: any) => {
+       setShowEdit(true)
+       setEditChat(item)
+    }
+
+    const handleEditChat = (e: any) => {
+        let copycat = {...editChat}
+        copycat.title = editTitle
+
+        setShowEdit(false)
+        onChangeTitle('') //nulstil text
+        dispatch(editChatroom(copycat))
+    }
+
+
     const renderChatroom = ({ item }: { item: any }) => {
         
          return ( <>
-                    <View style={body_area_style.chatroom}>
+            <View style={body_area_style.chatroom} nativeID="oneChatView">
 
-                        <Text style={body_area_style.text}>{item.title}</Text>
-                        <View style={body_area_style.buttons}>
-                            <Button color={"#00a"} title="Enter" onPress={
-                                function chatNavigation() {
-                                    navigation.navigate("Screen3")}
-                                } />
-                            <Button color={"#990"} title={item.status} onPress={()=> dispatch(toggleHappy())}/>    
-                            <Button title="remove" onPress={() => handleRemoveChatroom(item)} color="#d33" />
-                        
-                        </View>
-                        
-                    </View>
-                </>)
+            <Text style={body_area_style.text}>{item.title}</Text>
+            <View style={body_area_style.buttons}>
+                <Button color={"#03a"} title="Enter" onPress={
+                    function chatNavigation() {
+                        fetchOneChatroom(item, dispatch)
+                        console.log(item)
+                        navigation.navigate("ChatroomMessageScreen")}
+                    } />
+                <Button color={"orange"} title={"Edit Room"} onPress={()=> openEdit(item)}/>    
+                <Button title="remove" onPress={() => handleRemoveChatroom(item)} color="#933" />
+            </View>
+            
+            </View>
+               </> )
             };
     
+
     return (
         
+        <View style={styles.background}>
+        <ImageBackground source={require("../images/darkbg.jpg")} style={styles.background} resizeMode='cover'>
+
         <View style={styles.container}>
+                <View style={top_page.style}>
+                {/*    <Button title="Sort chatrooms" onPress={() => "sortér"} /> */}
+                    <Text style={body_area_style.arrow}>Drag down for more chatrooms ⬇</Text>
+                </View>
 
-            <View style={top_page.style}>
-                <Button title="Go to screen 2" onPress={() => navigation.navigate("Screen2")} />
-                <Text>{isHappy.toString()}</Text>
-                <Text>Chatrooms</Text>
-                <Text style={body_area_style.arrow}>Drag down for more chatrooms ⬇</Text>
+            {showEdit ? (
+            <View>
+
+                <Text style={body_area_style.text_two}>{editChat.title}</Text>
+                <View style={body_area_style.form_text}>
+                    
+                    <TextInput 
+                    onChangeText={onChangeTitle}
+                    value={editTitle}
+                    placeholder={"New name"}
+                    maxLength={15}
+                    textContentType={"name"}/>
+                 
+                    <Button title='submit' onPress={()=> handleEditChat(editChat)}></Button> 
+ 
+                {/*    <Button title="remove" onPress={() => handleRemoveChatroom(editChat)} color="#933" />   */}
+ 
+                </View>
             </View>
+                
+            ) : (
+                <FlatList 
+                    numColumns={3}
+                    data={chatrooms} style={body_area_style.flatlist}
+                    renderItem={renderChatroom}
+                />
+                )}
 
-            <FlatList
-                numColumns={3}
-                data={chatrooms} style={body_area_style.flatlist}
-                renderItem={renderChatroom}
-            />
+                <TextInput style={text_area_style.textinput}
+                    onChangeText={onCreateTitle}
+                    value={title}
+                    placeholder="Chatroom name"
+                    maxLength={15}
+                    textContentType={"name"}
+                />
 
-            <TextInput style={text_area_style.textinput}
-                onChangeText={onChangeTitle}
-                value={title}
-                placeholder="Chatroom name"
-                maxLength={15}
-                textContentType={"name"}
-            />
-            <View style={text_area_style.btn}>
-            <Button color={"#90a"} title="Create chatroom" onPress={handleAddChatroom} />
-            </View>
+                <View style={text_area_style.btn}>
+                <Button color={"#90a"} title="Create chatroom" onPress={handleAddChatroom} />
+                </View>
+
+        </View>
+        </ImageBackground>
         </View>
         )
     }
@@ -117,7 +166,11 @@ const styles = StyleSheet.create({
         backgroundColor: '#353535',
         alignItems: 'center',
         justifyContent: 'center',
-        border: 'solid darkgrey 1px'
+        border: 'solid darkgrey 1px',
+    },
+    background: {
+        height: "100%",
+        width: "100%"
     }
 })
 
@@ -131,15 +184,11 @@ const top_page = StyleSheet.create({
 const body_area_style = StyleSheet.create({
     flatlist: {
         flex: 1,
-       // border: 'solid green 1.5px',
         textAlign: 'center',
-       // height: 'fit',
         height: "50%",
         width:"fit-content",
-       // minWidth: "fit",
-        position: 'absolute',
+        position: 'absolute',   
         marginTop: '2%'
-       // marginBottom: '5px',
     },
     chatroom: {
         marginBottom: "1vh",
@@ -151,17 +200,32 @@ const body_area_style = StyleSheet.create({
         justifyContent: 'space-between',
         backgroundColor: "#222"
     },
+    buttons_two: {
+        flex: 1,
+        flexDirection: 'row'
+    },
     btn_one: {
-        //width: '40%',
         flex: 1,
         flexDirection: "row"
     },
-    btn_two: {
-        
+    form_text:{
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        flexDirection: "row",
+        marginBottom: "20vh",
+        backgroundColor: "#ccc",
+        color: "#05f"
     },
     text: {
         backgroundColor: "#222",
         color: "magenta",
+        fontFamily: "Times New Roman",
+        fontWeight: "bold"
+    },
+    text_two: {
+        backgroundColor: "#222",
+        color: "yellow",
         fontFamily: "Times New Roman",
         fontWeight: "bold"
     },
@@ -171,26 +235,6 @@ const body_area_style = StyleSheet.create({
         fontStyle: "italic",
         fontSize: 15,
         marginTop: "4%"
-    }
-})
-
-const body_style = StyleSheet.create({
-    rooms: {
-        flex: 1,
-        border: 'dotted #555 0.5px',
-        marginRight: '1px'
-    },
-    status: {
-        marginLeft: '2px',
-        backgroundColor: '#558'
-    }
-})
-
-const elements = StyleSheet.create({
-    styling: {
-        flex: 1,
-        flexDirection: 'row',
-        //width: 'fit-content'
     }
 })
 
@@ -205,6 +249,8 @@ const text_area_style = StyleSheet.create({
         marginBottom: "2%"
     }
 })
+
+
 
 
 

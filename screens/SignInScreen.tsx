@@ -18,29 +18,29 @@ export default function SignInScreen(){
 
         return (
             <View style = {styles.container}>
-                <ImageBackground source={require("../images/bg.png")} style={styles.background}>
-                <Text>Sign In</Text>
-                    
-                <View style={styles.input_fields}>
+                
+                <ImageBackground source={require("../images/bg2.png")} style={styles.background}>
+                    <Text>Sign In</Text>
+                        
+                    <View style={styles.input_fields}>
 
-                    <Text style={styles.text}>Chad's Chatrooms</Text>    
+                        <Text style={styles.text}>Chad's Chatrooms</Text>    
+                        
+                        <TextInput style = {styles.input}
+                            onChangeText = {onChangeEmail}
+                            value={email}
+                            placeholder="Email"
+                        />
+                        <TextInput style = {styles.input}
+                            onChangeText={onChangePassword}
+                            value={password}
+                            placeholder="Password"
+                            secureTextEntry
+                        />
                     
-                    <TextInput style = {styles.input}
-                        onChangeText = {onChangeEmail}
-                        value={email}
-                        placeholder="Email"
-                    />
-                    <TextInput style = {styles.input}
-                        onChangeText={onChangePassword}
-                        value={password}
-                        placeholder="Password"
-                        secureTextEntry
-                    />
-                
-                    <Button title="Sign In" onPress={handleSignIn} color={"#ab1"}/>
-                
-                </View>
-                
+                        <Button title="Sign In" onPress={handleSignIn} color={"#ab1"}/>
+                    
+                    </View>
                 </ImageBackground>
             </View>
             
