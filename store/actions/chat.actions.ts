@@ -1,4 +1,3 @@
-import { async } from "@firebase/util";
 import { Chatroom } from "../../entities/Chatroom";
 
 export const TOGGLE_HAPPY = 'TOGGLE_HAPPY';
